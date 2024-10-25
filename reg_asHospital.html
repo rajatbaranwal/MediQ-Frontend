@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register as Hospital</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            background-image: url('https://i.ibb.co/P41WVkW/background.jpg');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .register-container {
+            width: 400px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: purple;
+            font-family: 'Brush Script MT', cursive;
+            font-size: 48px;
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .error, .success {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <h2>Hospital Registration</h2>
+        <!-- Form with additional fields and validation -->
+        <form onsubmit="validateAndSubmit(event)">
+            <label for="hospitalName">Hospital Name:</label>
+            <input type="text" id="hospitalName" name="hospitalName" required>
+    
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+    
+            <label for="contact">Contact Number:</label>
+            <input type="tel" id="contact" name="contact" pattern="[0-9]{10}" placeholder="10-digit number" required>
+    
+            <label for="address">Hospital Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+    
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="password">ConfirmPassword:</label>
+            <input type="password" id="confirmpassword" name="password" required>
+            
+            <div class="form-check">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">I agree to the terms and conditions</label>
+            </div>
+    
+            <button type="submit">Register Hospital</button>
+        </form>
+    </div>
+    
+    <script>
+        async function validateAndSubmit(event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            var hospitalName = document.getElementById('hospitalName').value;
+            var email = document.getElementById('email').value;
+            var contact = document.getElementById('contact').value;
+            var address = document.getElementById('address').value;
+            var password = document.getElementById('password').value;
+            var confirmpassword = document.getElementById('confirmpassword').value;
+            var terms = document.getElementById('terms').checked;
+
+
+            if(password!=confirmpassword){
+                alert("Passwords do not match.");
+                         return false;
+            }
+    
+            // Basic validations
+            if (!hospitalName || !email || !contact || !address || !password || !terms ) {
+                alert("Please fill out all fields and agree to the terms.");
+                return false;
+            }
+    
+            // if (!/^\d{10}$/.test(contact)) {
+            //     alert("Please enter a valid 10-digit contact number.");
+            //     return false;
+            // }
+    
+            // Prepare the registration data
+            const registrationData = {
+                hospitalName: hospitalName,
+                email: email,
+                contact: contact,
+                address: address,
+                password: password,
+            };
+    
+            try {
+                // Send a POST request to the backend
+                const response = await fetch('https://mediq-4-k63n.onrender.com/api/auth/hosregister', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registrationData),
+                });
+    
+                const result = await response.json();
+    
+                if (response.status === 200) {
+                    alert("Registration successful!");
+                    window.location.href = "admindashboard.html"; // Redirect on success
+                } else {
+                    alert(result.msg || "Registration failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred: " + error.message);
+            }
+    
+            return false;
+        }
+    </script>
+    
+
+</body>
+</html>
